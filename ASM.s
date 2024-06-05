@@ -1,76 +1,42 @@
-.section .data                 #sezione variabili globali
+.section .data
+filename:   .asciz "input.txt"
+buffer:     .space 1024    # Buffer per la lettura del file
+fmt:        .asciz "%d\n"  # Formato per la stampa dei numeri
 
-hello:                         #etichetta
-      .ascii "Ciao Mondo!\n"   #stringa costante
+.section .text
+.globl _start
 
-input_file:
-      .ascii "input.txt"
-
-buffer_size: .int 49
-
-buffer: .space 50
-
-hello_len:
-      .long . - hello          #lunghezza della stringa in byte
-
-.section .text                 #sezione istruzioni
-      .global _start           #punto di inizio del programma
-
-.section .bss
-      
 _start:
-      movl $4, %eax            #Carica il codice della system call WRITE
-                               #in eax per scrivere la stringa
-                               #”Ciao Mondo!” a video.
-      
-      movl $1, %ebx            #Mette a 1 il contenuto di EBX
-                               #Quindi ora EBX=1. 1 è il
-                               #primo parametro per la write e
-                               #serve per indicare che vogliamo
-                               #scrivere nello standard output
+    # Apri il file
+    movl $5, %eax          # sys_open
+    movl $filename, %ebx   # Puntatore al nome del file
+    movl $0, %ecx          # O_RDONLY
+    int $0x80
+    movl %eax, %ebx        # File descriptor
 
-      leal hello, %ecx         #Secondo parametro dell write
-                               #Carica in ECX l’indirizzo di
-                               #memoria associato all’etichetta
-                               #hello, ovvero il puntatore alla
-                               #stringa “Ciao Mondo!\n” da stampare.
-
-      movl hello_len, %edx     #Terzo parametro della write
-                               #carica in EDX la lunghezza della
-                               #stringa “Ciao Mondo!\n”.
-
-      int $0x80                #esegue la system call write
-                               #tramite l’interrupt 0x80
+    # Leggi il contenuto del file
+    movl $3, %eax          # sys_read
+    movl %ebx, %ebx        # File descriptor
+    leal buffer, %ecx      # Puntatore al buffer
+    movl $1023, %edx       # Dimensione del buffer
+    int $0x80
 
 
-      movl $5, %eax     
-      leal input_file, %ebx
-      movl $0, %ecx    
-      int $0x80
+    add $1, %eax            # aggiungi 1 alla quantità dei caratteri letti dal file
+    movb $0, (%ecx, %eax)   # insrisci '/0' alla fine dei caratteri letti
 
-      movl %eax, %ebx
+    movl %eax, %edx         # salva caratteri letti per essere usati nella syscall write
 
-      movl $3, %eax
-      movl %ebx, %ebx
-      leal buffer, %ecx
-      movl buffer_size, %edx
-      int $0x80
-
+    # syscall write
+    movl $4, %eax            
+    movl $1, %ebx            
+    leal buffer, %ecx         
+    movl %edx, %edx     
+    int $0x80
 
 
-
-
-
-
-
-
-
-
-      movl $1, %eax            #Mette a 1 il registro EAX
-                               #1 è il codice della system call exit
-      
-      xorl %ebx, %ebx          #azzera EBX. Contiene il codice di
-                               #ritorno della exit
-
-      int $0x80                #esegue la system call exit
+    # Uscita
+    movl $1, %eax          # sys_exit
+    xor %ebx, %ebx        # Exit code 0
+    int $0x80
 
