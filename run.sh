@@ -1,3 +1,3 @@
-as -o test3.o test3.s
-ld -o test3.x test3.o
-./test3.x
+as -o test_pietro.o test_pietro.s
+ld -o test_pietro.x test_pietro.o
+./test_pietro.x
