@@ -1,3 +1,3 @@
-as -o ASM.o ASM.s
-ld -o ASM.x ASM.o
-./ASM.x
+as -o ASM.o test.s
+ld -o test.x test.o
+./test.x
