@@ -3,7 +3,7 @@ filename:   .asciz "input.txt"
 buffer:     .space 128                              # Buffer per la lettura del file
 array:      .long 0, 0, 0, 0, 0, 0, 0, 0, 0, 0      # Array di 10 dword inizializzati a 0
 fmt:        .asciz "%d\n"                           # Formato per la stampa dei numeri
-buffers:    .space 160                              # 10 buffers di 4 interi ciascuno (10*4*4)
+buffers:    .space 40                               # 10 buffers di 4 interi ciascuno
 num_lines:  .long 0                                 # Contatore per il numero di righe lette
 
 .section .text
@@ -37,7 +37,7 @@ read_loop:
 
     # Calcola l'indice corrente nel buffer
     movl num_lines, %edi         # Carica il numero di righe lette
-    imull $16, %edi              # Moltiplica per 16 (4 interi per riga, 4 byte ciascuno)
+    shl $4, %edi                 # Moltiplica per 16 (4 interi per riga, 4 byte ciascuno)
     lea buffers, %esi            # Puntatore all'inizio del buffer
     add %edi, %esi               # Puntatore al buffer corrente
 
@@ -55,7 +55,7 @@ parse_values:
 
     # Salva il puntatore al buffer nell'array
     movl num_lines, %edi         # Carica il numero di righe lette
-    imull $4, %edi               # Moltiplica per 4 (dimensione di ogni puntatore nell'array)
+    shl $2, %edi                 # Moltiplica per 4 (dimensione di ogni puntatore nell'array)
     lea array, %esi              # Puntatore all'inizio dell'array
     add %edi, %esi               # Puntatore alla cella corrente dell'array
     movl %esi, %eax              # Carica l'indirizzo del buffer corrente
