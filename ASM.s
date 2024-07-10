@@ -22,7 +22,7 @@ read_loop:
     # Leggi il contenuto del file
     movl $3, %eax          # sys_read
     leal buffer, %ecx      # Puntatore al buffer
-    movl $1023, %edx       # Dimensione del buffer
+    movl $128, %edx       # Dimensione del buffer
     int $0x80
 
     cmp $0, %eax                 # Controlla se abbiamo raggiunto la fine del file
@@ -50,6 +50,11 @@ end_read_loop:
     mov num_lines, %edi          # Carica il numero di righe lette
     movl $1, %ebx                # File descriptor 1 (STDOUT)
 
+
+
+
+
+/*
 print_loop:
     test %edi, %edi              # Controlla se abbiamo stampato tutte le righe
     jz exit_success              # Se sì, esci
@@ -103,3 +108,8 @@ print_string:
 #    movl $1, %eax          # sys_exit
 #    xor %ebx, %ebx        # Exit code 0
 #    int $0x80
+
+*/
+
+
+
