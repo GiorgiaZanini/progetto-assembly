@@ -24,3 +24,9 @@ _start
 lettura_e_salvataggio_file:
     movl $3, %eax   # sys_read
     leal buffer, %ecx   # prende l'indirizzo di partenza (puntatore) del buffer e lo carica in ecx
+    int 0x80
+
+    cmp $0, %eax    # se offset è 0 -> raggiunta la fine del file
+    je end_read_loop    # se ha raggiunto la fine del file (TRUE) -> non legge più
+
+    
