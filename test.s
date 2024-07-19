@@ -33,7 +33,7 @@ _start:
     leal buffer, %ecx         
     movl %edx, %edx     
     int $0x80
-
+    
 
     # Uscita
     movl $1, %eax          # sys_exit

@@ -10,16 +10,16 @@ formato_di_stampa:  .asciz "%d\n"   //TODO
 .section .text
     .global _start
 
-_start
+_start:
     # apertura file
     movl $5, %eax   # sys_open
     movl $nome_file, %ebx
     movl $0, %ecx   # per dire che voglio leggere il file
     int  $0x80
-    # il file desciptor viene poi salvato in eax
+    # il file descriptor viene poi salvato in eax
     movl %eax, %ebx
 
-    movl $0, %ecx   # utilizzo il registro ecx come contatore e lo setto a 0
+//    movl $0, %edx   # utilizzo il registro ecx come contatore e lo setto a 0
 
 lettura_e_salvataggio_file:
     movl $3, %eax   # sys_read
@@ -29,4 +29,21 @@ lettura_e_salvataggio_file:
     cmp $0, %eax    # se offset è 0 -> raggiunta la fine del file
     je end_read_loop    # se ha raggiunto la fine del file (TRUE) -> non legge più
 
-    
+    # stampa il contenuto del buffer
+    movl $4, %eax   # sys_write
+    movl $1, %ebx   # file descriptor per stdout
+    leal buffer, %ecx   # indirizzo di partenza del buffer
+    movl %eax, %edx # numero di byte letti
+    int 0x80
+
+    jmp lettura_e_salvataggio_file # continua il ciclo di lettura
+
+end_read_loop:
+    # chiusura file
+    movl $6, %eax   # sys_close
+    int 0x80
+
+    # terminazione del programma
+    movl $1, %eax   # sys_exit
+    xorl %ebx, %ebx # exit code 0
+    int 0x80
