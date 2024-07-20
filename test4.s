@@ -3,7 +3,7 @@ filename:   .asciz "input.txt"
 buffer:     .space 128                              # Buffer per la lettura del file
 array:      .long 0, 0, 0, 0, 0, 0, 0, 0, 0, 0      # Array di 10 dword inizializzati a 0
 fmt:        .asciz "%d\n"                           # Formato per la stampa dei numeri
-buffers:    .space 40                               # 10 buffers di 4 interi ciascuno
+buffers:    .space 160                              # 10 buffers di 4 interi ciascuno (10*4*4)
 num_lines:  .long 0                                 # Contatore per il numero di righe lette
 
 .section .text
@@ -31,13 +31,12 @@ read_loop:
     je end_read_loop
 
     # Aggiungi un terminatore di stringa al buffer
-    movl %eax, %edx
-    add $1, %edx                 # Incrementa il numero di byte letti
-    movb $0, (%ecx, %edx)        # Aggiungi il terminatore di stringa
+    addl $1, %eax               # Incrementa il numero di byte letti
+    movb $0, (%ecx, %eax)       # Aggiungi il terminatore di stringa
 
     # Calcola l'indice corrente nel buffer
     movl num_lines, %edi         # Carica il numero di righe lette
-    shl $4, %edi                 # Moltiplica per 16 (4 interi per riga, 4 byte ciascuno)
+    imull $16, %edi              # Moltiplica per 16 (4 interi per riga, 4 byte ciascuno)
     lea buffers, %esi            # Puntatore all'inizio del buffer
     add %edi, %esi               # Puntatore al buffer corrente
 
@@ -55,7 +54,7 @@ parse_values:
 
     # Salva il puntatore al buffer nell'array
     movl num_lines, %edi         # Carica il numero di righe lette
-    shl $2, %edi                 # Moltiplica per 4 (dimensione di ogni puntatore nell'array)
+    imull $4, %edi               # Moltiplica per 4 (dimensione di ogni puntatore nell'array)
     lea array, %esi              # Puntatore all'inizio dell'array
     add %edi, %esi               # Puntatore alla cella corrente dell'array
     movl %esi, %eax              # Carica l'indirizzo del buffer corrente
@@ -77,8 +76,8 @@ print_loop:
     movl $0, %ecx                # Inizializza l'indice dei valori
 print_values:
     movl (%esi, %ecx, 4), %eax   # Carica il valore corrente
-    pushl %eax                   # Salva il valore sullo stack
-    pushl $fmt                   # Salva il formato sullo stack
+    push %eax                   # Salva il valore sullo stack
+    push $fmt                   # Salva il formato sullo stack
     call printf                  # Stampa il valore
     addl $8, %esp                # Ripulisce lo stack
     incl %ecx                    # Incrementa l'indice dei valori
@@ -103,12 +102,12 @@ exit_error:
 parse_int:
     # Parsea il prossimo valore intero dalla stringa puntata da %eax
     # Il valore parsed viene salvato in %ebx
-    pushl %ebp
+    push %ebp
     movl %esp, %ebp
-    pushl %edi
-    pushl %ecx
-    pushl %ebx
-    pushl %edx
+    push %edi
+    push %ecx
+    push %ebx
+    push %edx
     movl %eax, %ecx
     movl $0, %ebx
 parse_int_loop:
@@ -124,10 +123,10 @@ parse_int_loop:
     jmp parse_int_loop
 parse_int_done:
     movl %ebx, %eax              # Restituisce il valore parsed in %eax
-    popl %edx
-    popl %ebx
-    popl %ecx
-    popl %edi
+    pop %edx
+    pop %ebx
+    pop %ecx
+    pop %edi
     movl %ebp, %esp
-    popl %ebp
+    pop %ebp
     ret
