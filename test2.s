@@ -1,72 +1,84 @@
 .section .data
-filename:   .asciz "input.txt"
-buffer:     .space 1024         # Buffer per la lettura di una riga del file
-array:      .space 4096         # Array per memorizzare le righe del file (max 256 righe a 16 byte ciascuna)
-fmt:        .asciz "%d\n"       # Formato per la stampa dei numeri
+filename:    .asciz "input.txt"
+buffer:      .space 1024
+numbers:     .space 256       # spazio per gli interi
 
 .section .bss
-num_lines:  .long 0             # Contatore delle righe del file
+.lcomm int_buffer, 256
 
 .section .text
 .globl _start
 
 _start:
-    # Apri il file
-    movl $5, %eax          # sys_open
-    movl $filename, %ebx   # Puntatore al nome del file
-    movl $0, %ecx          # O_RDONLY
-    int $0x80
-    movl %eax, %ebx        # File descriptor
-
-read_loop:
-    # Leggi una riga del file
-    movl $3, %eax          # sys_read
-#    movl %ebx, %ebx        # File descriptor
-    leal buffer, %ecx      # Puntatore al buffer
-    movl $1023, %edx       # Dimensione del buffer (-1 per lasciare spazio per il terminatore di stringa)
+    # Open the file
+    movl $5, %eax            # sys_open
+    movl $filename, %ebx     # filename
+    movl $0, %ecx            # read-only mode
     int $0x80
 
-    # Controlla fine file
-    cmp $0, %eax
-    je end_read_loop
+    # Check if the file was opened successfully
+    test %eax, %eax
+    js _exit
+    movl %eax, %ebx          # file descriptor
 
-    # Aggiungi un terminatore di stringa al buffer
-    addl $1, %eax          # Incrementa il numero di byte letti
-    movb $0, (%ecx, %eax)  # Aggiungi il terminatore di stringa
-
-    # Salva la riga nell'array
-    leal array, %edi       # Puntatore all'inizio dell'array
-    addl num_lines, %edi   # Puntatore alla cella corrente dell'array
-    movl %ecx, (%edi)      # Copia la riga nel nuovo array
-    addl $1, num_lines     # Incrementa il contatore delle righe
-
-    jmp read_loop
-
-end_read_loop:
-    # Stampa le righe lette
-    leal array, %esi       # Puntatore alla prima riga
-    movl num_lines, %ecx   # Numero di righe da stampare
-    call print_lines
-
-    # Uscita
-    movl $1, %eax          # sys_exit
-    xor %ebx, %ebx        # Exit code 0
+    # Read the file content into buffer
+    movl $3, %eax            # sys_read
+    movl %ebx, %ebx          # file descriptor
+    movl $buffer, %ecx       # buffer
+    movl $1024, %edx         # buffer size
     int $0x80
 
-print_lines:
-    # Stampa le righe salvate nell'array
-    movl $4, %eax          # sys_write
-    movl $1, %ebx          # File descriptor 1 (STDOUT)
-    movl $fmt, %edx        # Puntatore al formato
+    # Check if the file was read successfully
+    test %eax, %eax
+    js _exit
 
-print_loop:
-    cmp $0, %ecx          # Controlla se abbiamo stampato tutte le righe
-    je print_done
-    movl (%esi), %edi      # Puntatore alla riga corrente
+    movl %eax, %esi          # save the number of bytes read
+    movl $buffer, %edi       # pointer to the buffer
+
+    # Initialize the pointers
+    movl $int_buffer, %edi   # destination for integers
+    xorl %ebx, %ebx          # clear EBX to use as temporary storage for integer conversion
+
+parse_loop:
+    cmp $0, %esi              # check if we have read all bytes
+    je end_parsing
+
+    movb (%ecx), %al         # read a byte
+    inc %ecx
+    dec %esi
+
+    # Check if the byte is a digit
+    cmp $'0', %al
+    jb parse_loop            # not a digit, continue parsing
+    cmp $'9', %al
+    ja parse_loop            # not a digit, continue parsing
+
+    # Convert ASCII to integer
+    sub $'0', %al
+    imul $10, %ebx           # multiply previous number by 10
+    add %eax, %ebx           # add current digit
+
+    # Check the next character to see if it's still part of the number
+    cmp $0, %esi              # check if we have read all bytes
+    je save_number
+
+    movb (%ecx), %al         # read the next byte
+    cmp $'0', %al
+    jb save_number           # if not a digit, save the current number
+    cmp $'9', %al
+    ja save_number           # if not a digit, save the current number
+    jmp parse_loop
+
+save_number:
+    mov %ebx, (%edi)         # save the integer
+    add $4, %edi             # move to the next position in int_buffer
+    xorl %ebx, %ebx          # reset EBX for the next number
+
+    jmp parse_loop
+
+end_parsing:
+    # Exit the program
+_exit:
+    movl $1, %eax            # sys_exit
+    xorl %ebx, %ebx          # exit code 0
     int $0x80
-    addl $4, %esi          # Passa alla riga successiva
-    decl %ecx              # Decrementa il contatore delle righe
-    jmp print_loop
-
-print_done:
-    ret

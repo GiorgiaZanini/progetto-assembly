@@ -1,3 +1,3 @@
-as -o test.o test.s
-ld -o test.x test.o
-./test.x
+as -o test2.o test2.s
+ld -o test2.x test2.o
+./test2.x
