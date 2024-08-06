@@ -35,7 +35,7 @@
         inc %ecx                # incrementa il contatore delle cifre da stampare
         jmp continua_a_dividere
 
-    stampa:
+    stampa:JZ
     cmp $0, %ebx                # controlla se ci sono (ancora) caratteri da
                                 # stampare
     je fine_itoa                # se ebx=0 ho stampato tutto, quindi salto alla fine

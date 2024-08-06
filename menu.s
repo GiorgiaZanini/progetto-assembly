@@ -4,7 +4,7 @@
 
 .section .text
     .global menu
-#    .type menu, @function
+    .type menu, @function
 
     menu:
 
