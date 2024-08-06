@@ -2,9 +2,12 @@
 filename:    .asciz "input.txt"
 buffer:      .space 1024
 numbers:     .space 256       # spazio per gli interi
+formato_di_stampa:  .asciz "%d\n"
 
 .section .bss
 .lcomm int_buffer, 256
+len:
+    .skip 4            # Spazio per memorizzare la lunghezza letta
 
 .section .text
 .globl _start
@@ -32,7 +35,27 @@ _start:
     test %eax, %eax
     js _exit
 
-    movl %eax, %esi          # save the number of bytes read
+    movl %eax, %edx
+#    movl $4, %eax
+#    movl $1, %ebx
+#    leal buffer, %ecx         
+#    movl %edx, %edx     
+#    int $0x80
+
+    # Converti il numero di byte letti in stringa (ASCII)
+    movl len, %esi      # carica il numero di byte letti in %esi
+    addl $48, %esi      # converte il numero in carattere ASCII ('0' = 48)
+    
+    # Stampa il numero di byte letti
+    movl $4, %eax       # syscall number for sys_write
+    movl $1, %ebx       # file descriptor 1 (stdout)
+    movl %esi, %ecx     # carica l'ASCII del numero in %ecx
+    movl $1, %edx       # lunghezza del numero (1 byte)
+    int $0x80           # esegui syscall
+
+    movl %edx, %esi
+
+#    movl %eax, %esi          # save the number of bytes read
     movl $buffer, %edi       # pointer to the buffer
 
     # Initialize the pointers

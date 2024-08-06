@@ -1,6 +1,7 @@
 .section .data
 filename:   .asciz "input.txt"
-buffer:     .space 1024    # Buffer per la lettura del file
+buffer:     .space 160  # 16 (4 byte * 4 spazi) * 10 (spazie dell'array)
+array:      .long 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 fmt:        .asciz "%d\n"  # Formato per la stampa dei numeri
 
 .section .text
@@ -10,7 +11,7 @@ _start:
     # Apri il file
     movl $5, %eax          # sys_open
     movl $filename, %ebx   # Puntatore al nome del file
-    movl $0, %ecx          # O_RDONLY
+    movl $0, %ecx          # costante 0 per (solo) leggere il file
     int $0x80
     movl %eax, %ebx        # File descriptor
 
@@ -26,6 +27,8 @@ _start:
     movb $0, (%ecx, %eax)   # insrisci '/0' alla fine dei caratteri letti
 
     movl %eax, %edx         # salva caratteri letti per essere usati nella syscall write
+
+    
 
     # syscall write
     movl $4, %eax            
