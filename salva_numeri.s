@@ -3,7 +3,7 @@
     tmp: .long 0
     carattere_appena_letto_dal_file: .long -1
     array_counter: .long 0
-#    file_counter: .long 0
+    contatore_numero_prodotti: .long 0
     array: .long 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0
 
 .section .text
@@ -49,12 +49,11 @@
 
 
     not_in_number_range:
-    #    cmp $',', %eax
         cmp $44, %eax   # ',' ascii
         je salva_in_array
 
         cmp $12, %eax   # '\n'(line feed) ascii
-        je salva_in_array
+        je incrementa_numero_prodotti
 
 
     salva_in_array:
@@ -62,6 +61,10 @@
 
 
         movl $0, tmp
+
+    incrementa_numero_prodotti:
+        incl contatore_numero_prodotti
+        jmp salva_in_array
 
 
     end_read_loop:
