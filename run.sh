@@ -2,10 +2,10 @@
 # ld -o test.x test.o
 # ./test.x
 
-as test.s -32 -o test.o
-ld test.o -m elf_i386 -o test.x
-./test.x
+as converti_int_a_str.s -32 -o converti_int_a_str.o
+ld converti_int_a_str.o -m elf_i386 -o converti_int_a_str.x
+./converti_int_a_str.x
 
 # as -gstabs -o main.o main.s
 # as -gstabs -o itoa.o itoa.s
-# ld itoa.o main.o -o esempio_eseguibile
+# ld itoa.o test.o -o esempio_eseguibile

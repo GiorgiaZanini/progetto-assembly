@@ -12,33 +12,33 @@
     popl %esi
     popl %esi
 
-    # Primo parametro
+    # parametro_1
     popl %esi
 
-    # Se il parametro non è vuoto apri il file
+    # Se il parametro_1 non è vuoto -> apri il file
     testl %esi, %esi
     jz errore_parametri
 
-    # Apri il file del parametro1
+    # Apri il file del parametro_1
     movl $5, %eax   # Syscall open
     movl %esi, %ebx # Nome del file
     movl $0, %ecx   # Modalità lettura
     int $0x80
 
-    # Se il file descriptor è null allora errore
+    # Se il file descriptor è null -> errore
     cmp $0, %eax
     jl errore_apertura_file
 
     movl %eax, ordini_fd
 
-    # Secondo parametro
+    # parametro_2
     popl %esi
 
-    # Se il parametro non è vuoto apri il file
+    # Se il parametro_2 non è vuoto -> apri il file
     testl %esi, %esi
     jz endParams
 
-    # Apri il file del parametro2
+    # Apri il file del parametro_2
     movl $5, %eax   # Syscall open
     movl %esi, %ebx # Nome del file
     movl $1, %ecx   # Modalità scrittura
