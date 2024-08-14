@@ -1,5 +1,5 @@
 .section .data
-    array: .space 11
+    array: .space 11    # 10 cifre + terminatore
 #    numero_cifre: 0
 
 .section .text
@@ -32,8 +32,8 @@
         movl $0, %ebx
 
         popl %eax
-        movl array, %edx
-        addl %ebx, %edx
+        leal array, %edx
+        addl %ebx, %edx     # somma indirizzo dell'array a posizione
         movl %eax, %edx
 
         incl %ebx
@@ -46,7 +46,7 @@
     aggiungi_terminatore:
         incl %ebx
 
-        movl array, %edx
+        leal array, %edx
         addl %ebx, %edx
         movl $0x00, %edx
     
