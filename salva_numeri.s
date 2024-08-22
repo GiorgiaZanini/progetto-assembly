@@ -1,6 +1,6 @@
 .section .data
     ordini_fd: .int -1
-    tmp: .long 0
+    tmp: .space 1
     carattere_appena_letto_dal_file: .long -1
     array_counter: .long 0
     contatore_numero_prodotti: .long 0
@@ -58,7 +58,7 @@
 
 
     salva_in_array:
-        movl tmp, (array, array_counter)
+        movb tmp, array_counter(array)
 
 
         addl $4, array_counter
@@ -78,3 +78,8 @@
         movl errore, %ecx
         call stampa_stringa
         ret
+
+                # per testare se funziona singolarmente -> sys_exit
+                movl $1, %eax
+                xorl %ebx, %ebx
+                int $0x80
