@@ -8,4 +8,4 @@ ld salva_numeri_2.o -m elf_i386 -o salva_numeri_2.x
 
 # as -gstabs -o main.o main.s
 # as -gstabs -o itoa.o itoa.s
-# ld itoa.o test.o -o esempio_eseguibile
+# ld itoa.o main.o -o esempio_eseguibile

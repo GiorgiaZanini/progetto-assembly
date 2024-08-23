@@ -9,7 +9,7 @@
         movl $0, %edx
 
     count_loop:
-        movb (%edx,%ecx), %bl
+        movb (%ecx,%edx), %bl
 
         cmp $0, %bl
         je print
@@ -20,7 +20,7 @@
     print:
         movl $4, %eax
         movl $1, %ebx   # stdout
-        # %edx -> stringa 
+        # %ecx -> stringa 
         # %edx -> lunghezza della stringa
         int $0x80
 
