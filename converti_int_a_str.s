@@ -1,26 +1,36 @@
 .section .data
     array: .space 11    # 10 cifre + terminatore
-    numero_cifre: .int 0
 
 .section .text
     .global stampa_int
     .type stampa_int, @function
 
     stampa_int:
-        movl $10, %ebx  # per dividere per 10 e prendere l'ultima cifra
         xorl %ecx, %ecx
 
-        testl %eax, %eax
-        jz fine
+#        testl %eax, %eax
+#        jz fine
 
     divisione:
+        movl $10, %ebx  # per dividere per 10 e prendere l'ultima cifra
         xorl %edx, %edx     # azzera il resto
 
+        # eax -> dividendo (numero)
+        # ebx -> divisore (10)
+        #     -> indirizzo array --> array + contatore
+        # ecx -> contatore cifre
+        # edx -> resto
+        ## esi (Extended Source Index) -> x
+        ## edi (Extended Destination Index) -> indirizzo array --> array + contatore
         divl %ebx   # eax : ebx = eax resto edx
-        addl $48, %edx
+        addl $48, %edx  # trasformo il resto in ascii
         
         incl %ecx
-        movl %ecx, numero_cifre
+
+        leal array, %ebx
+        addl %ecx, %ebx
+
+
         subl $10, %ecx
         imull $-1, %ecx
         
@@ -58,8 +68,4 @@
     
     fine:
         ret
-
-                # per testare se funziona singolarmente -> sys_exit
-#                movl $1, %eax
-#                xorl %ebx, %ebx
-#                int $0x80
+        

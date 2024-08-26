@@ -9,5 +9,6 @@
 
 as main_test_stinga.s -32 -o main_test_stinga.o
 as stampa_stringa.s -32 -o stampa_stringa.o
-ld main_test_stinga.o stampa_stringa.o -m elf_i386 -o main_2.x
+as converti_int_a_str.s -32 -o converti_int_a_str.o
+ld main_test_stinga.o stampa_stringa.o converti_int_a_str.o -m elf_i386 -o main_2.x
 ./main_2.x
