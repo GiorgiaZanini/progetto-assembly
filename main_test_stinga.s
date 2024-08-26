@@ -9,7 +9,7 @@
         leal stringa, %eax  # passo alla funzione il puntatore al primo carattere della stringa
         call stampa_stringa
 
-        movl $10, %eax
+        movl $312, %eax
         call converti_int_a_str
         call stampa_stringa
         leal a_capo, %eax
