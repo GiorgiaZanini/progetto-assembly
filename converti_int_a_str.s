@@ -7,14 +7,12 @@
 
     converti_int_a_str:
         # eax contiene il numero
-        movl $11, %ecx  # contatore partendo dalla fine
+        movl $10, %ecx  # contatore partendo dalla fine
 
         # metto il terminatore nell'ultima posizione dell'array
         leal array, %ebx
         addl %ecx, %ebx
         movl $0, (%ebx)   # terminatore
-
-        decl %ecx
 
     divisione_e_salvataggio_cifre:
         movl $10, %ebx  # per dividere per 10 e prendere l'ultima cifra
@@ -28,34 +26,13 @@
         divl %ebx   # eax : ebx = eax resto edx
         addl $48, %edx  # trasformo il resto in ascii
 
-
-
-        movl %ebx, %ecx
-        
-        pushl %eax
-        pushl %ebx
-        pushl %ecx
-        pushl %edx
-
-        movl $4, %eax
-        movl $1, %ebx
-        movl $1, %edx
-        int $0x80
-
-        popl %eax
-        popl %ebx
-        popl %ecx
-        popl %edx
-
-
-
-        subl $4, %ecx
+        decl %ecx
 
         # calcolo l'idirizzo di dove collocare la cifra nell'array
         leal array, %ebx
         addl %ecx, %ebx
         # metto la cifra nell'array
-        movl %edx, (%ebx)   # ebx contiene l'indirizzo dell'array + il contatore
+        movb %dl, (%ebx)   # ebx contiene l'indirizzo dell'array + il contatore
 
         testl %eax, %eax
         jz ritorna_la_stringa
