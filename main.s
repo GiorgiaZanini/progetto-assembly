@@ -31,12 +31,14 @@
 
     movl %eax, ordini_fd
 
+    call salva_numeri
+
     # parametro_2
     popl %esi
 
     # Se il parametro_2 non è vuoto -> apri il file
     testl %esi, %esi
-    jz endParams
+    # jz endParams
 
     # Apri il file del parametro_2
     movl $5, %eax   # Syscall open

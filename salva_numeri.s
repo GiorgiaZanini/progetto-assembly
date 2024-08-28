@@ -1,11 +1,13 @@
 .section .data
     ordini_fd: .int -1
-    tmp: .space 1
+    tmp: .long 0
     carattere_appena_letto_dal_file: .long -1
     array_counter: .long 0
     contatore_numero_prodotti: .long 0
-    array: .long 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0, 000, 00, 000, 0
+    array: .long 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     errore: .ascii "errore nella lattura del file\n\0"
+
+    a_capo: .ascii "\n\0"
 
 .section .text
     .global salva_numeri
@@ -17,7 +19,7 @@
     read_loop:    
         # Lettura di 1 byte alla volta (1 carattere)
         movl $3, %eax        # syscall read
-        movl pianificazione_fd, %ebx         # File descriptor
+        movl ordini_fd, %ebx         # File descriptor
         movl $carattere_appena_letto_dal_file, %ecx
         movl $1, %edx        # Lunghezza massima
         int $0x80  
@@ -53,12 +55,17 @@
         cmpl $44, %eax   # ',' ascii
         je salva_in_array
 
-        cmpl $12, %eax   # '\n'(line feed) ascii
+        cmpl $10, %eax   # '\n'(new line) ascii
         je incrementa_numero_prodotti
 
 
     salva_in_array:
-        movb tmp, array_counter(array)
+#        movb tmp, (array_counter, array)
+        movl tmp, %eax
+        call converti_int_a_str
+        call stampa_stringa
+        leal a_capo, %eax
+        call stampa_stringa
 
 
         addl $4, array_counter
@@ -71,14 +78,17 @@
 
 
     end_read_loop:
-        ret
+#        ret
+                # per testare se funziona singolarmente -> sys_exit
+                movl $1, %eax
+                xorl %ebx, %ebx
+                int $0x80
 
 
     exit_with_error:
         movl errore, %ecx
         call stampa_stringa
-        ret
-
+#        ret
                 # per testare se funziona singolarmente -> sys_exit
                 movl $1, %eax
                 xorl %ebx, %ebx
