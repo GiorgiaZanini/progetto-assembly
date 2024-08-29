@@ -1,13 +1,14 @@
 .section .data
     ordini_fd: .int -1
     tmp: .long 0
-    carattere_appena_letto_dal_file: .long -1
+    carattere_letto: .byte -1
     array_counter: .long 0
     contatore_numero_prodotti: .long 0
     array: .long 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     errore: .ascii "errore nella lattura del file\n\0"
 
     a_capo: .ascii "\n\0"
+    pre_errore: .ascii "errore nella lattura nel file descriptor\n\0"
 
 .section .text
     .global salva_numeri
@@ -16,11 +17,16 @@
     salva_numeri:
         movl %eax, ordini_fd
         
-    read_loop:    
+    read_loop:
+        # printf    
+        cmpl $0, %eax
+        jl exit_with_errore
+
+
         # Lettura di 1 byte alla volta (1 carattere)
         movl $3, %eax        # syscall read
         movl ordini_fd, %ebx         # File descriptor
-        movl $carattere_appena_letto_dal_file, %ecx
+        movl $carattere_letto, %ecx
         movl $1, %edx        # Lunghezza massima
         int $0x80  
 
@@ -31,7 +37,7 @@
         je end_read_loop
 
         # se passa il controllo dell'errore e del fine file -> metto il numero appena letto in eax, per i successi controlli sul numero
-        movl carattere_appena_letto_dal_file, %eax
+        movl carattere_letto, %eax  # ho già controllato eax
 
         # if (eax >= 0 && eax < 10)
         cmpl $48, %eax   # 0 ascii
@@ -40,56 +46,53 @@
         jg not_in_number_range    # eax > 9
 
 
-    in_range:   # (numero_salvato * 10) + nuova_cifra
-        movl tmp, %ebx
+#    in_range:   # (numero_salvato * 10) + nuova_cifra
+#        movl tmp, %ebx
 
-        imull $10, %eax
-        addl %eax, %ebx
+#        imull $10, %eax
+#        addl %eax, %ebx
 
-        movl %ebx, tmp
+#        movl %ebx, tmp
 
-        jmp read_loop
+#        jmp read_loop
 
 
     not_in_number_range:
-        cmpl $44, %eax   # ',' ascii
-        je salva_in_array
+#        cmpl $44, %eax   # ',' ascii
+#        je salva_in_array
 
-        cmpl $10, %eax   # '\n'(new line) ascii
-        je incrementa_numero_prodotti
+#        cmpl $10, %eax   # '\n'(new line) ascii
+#        je incrementa_numero_prodotti
 
 
-    salva_in_array:
+#    salva_in_array:
 #        movb tmp, (array_counter, array)
-        movl tmp, %eax
-        call converti_int_a_str
-        call stampa_stringa
-        leal a_capo, %eax
-        call stampa_stringa
+#        movl tmp, %eax
+#        call converti_int_a_str
+#        call stampa_stringa
+#        leal a_capo, %eax
+#        call stampa_stringa
 
 
-        addl $4, array_counter
-        movl $0, tmp
+#        addl $4, array_counter
+#        movl $0, tmp
 
 
-    incrementa_numero_prodotti:
-        incl contatore_numero_prodotti
-        jmp salva_in_array
+#    incrementa_numero_prodotti:
+#        incl contatore_numero_prodotti
+#        jmp salva_in_array
 
 
     end_read_loop:
-#        ret
-                # per testare se funziona singolarmente -> sys_exit
-                movl $1, %eax
-                xorl %ebx, %ebx
-                int $0x80
-
+        ret
 
     exit_with_error:
-        movl errore, %ecx
+        leal errore, %eax
         call stampa_stringa
-#        ret
-                # per testare se funziona singolarmente -> sys_exit
-                movl $1, %eax
-                xorl %ebx, %ebx
-                int $0x80
+        ret
+
+    # printf            
+    exit_with_errore:
+        leal pre_errore, %eax
+        call stampa_stringa
+        ret
