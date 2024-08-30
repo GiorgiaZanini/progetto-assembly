@@ -1,12 +1,13 @@
 .section .data
     ordini_fd: .int -1
-    tmp: .long 0
-    carattere_letto: .byte -1
-    array_counter: .long 0
-    contatore_numero_prodotti: .long 0
+    numero_tmp: .long 0     # per ricostruire il numero
+    carattere_letto: .byte -1   # carattere letto dalla sys
+#    array_counter: .long 0
+#    contatore_numero_prodotti: .long 0
     array: .long 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     errore: .ascii "errore nella lattura del file\n\0"
 
+    # temporaneo per testare
     a_capo: .ascii "\n\0"
     pre_errore: .ascii "errore nella lattura nel file descriptor\n\0"
 
@@ -21,7 +22,6 @@
         # printf    
         cmpl $0, %eax
         jl exit_with_errore
-
 
         # Lettura di 1 byte alla volta (1 carattere)
         movl $3, %eax        # syscall read
@@ -39,6 +39,7 @@
         # se passa il controllo dell'errore e del fine file -> metto il numero appena letto in eax, per i successi controlli sul numero
         movl carattere_letto, %eax  # ho già controllato eax
 
+
         # if (eax >= 0 && eax < 10)
         cmpl $48, %eax   # 0 ascii
         jl not_in_number_range     # eax < 0
@@ -46,13 +47,22 @@
         jg not_in_number_range    # eax > 9
 
 
-#    in_range:   # (numero_salvato * 10) + nuova_cifra
-#        movl tmp, %ebx
+    in_range:   # (numero_salvato * 10) + nuova_cifra
+        subl $48, %eax  # converto la cifra da ascii a "numero"
+
+        # printf per conntrollare il numero
+        call converti_int_a_str
+        call stampa_stringa
+        leal a_capo, %eax
+        call stampa_stringa
+        movl carattere_letto, %eax
+        
+#        movl numero_tmp, %ebx
 
 #        imull $10, %eax
 #        addl %eax, %ebx
 
-#        movl %ebx, tmp
+#        movl %ebx, numero_tmp
 
 #        jmp read_loop
 
@@ -66,8 +76,8 @@
 
 
 #    salva_in_array:
-#        movb tmp, (array_counter, array)
-#        movl tmp, %eax
+#        movb numero_tmp, (array_counter, array)
+#        movl numero_tmp, %eax
 #        call converti_int_a_str
 #        call stampa_stringa
 #        leal a_capo, %eax
@@ -75,7 +85,7 @@
 
 
 #        addl $4, array_counter
-#        movl $0, tmp
+#        movl $0, numero_tmp
 
 
 #    incrementa_numero_prodotti:
