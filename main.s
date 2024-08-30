@@ -24,7 +24,7 @@ _start:
 
     # Apri il file del parametro_1
     movl $5, %eax   # sys_open
-    movl filename, %ebx     # temporaneo per testare
+    movl $filename, %ebx     # temporaneo per testare
 #    movl %esi, %ebx # nome file
     movl $0, %ecx   # solo lettura
     int $0x80
