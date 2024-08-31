@@ -4,6 +4,7 @@
     carattere_letto: .byte -1   # carattere letto dalla sys
 #    array_counter: .long 0
 #    contatore_numero_prodotti: .long 0
+    array_numero: .space 4
     array: .long 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     errore: .ascii "errore nella lattura del file\n\0"
 
@@ -50,12 +51,7 @@
     in_range:   # (numero_salvato * 10) + nuova_cifra
         subl $48, %eax  # converto la cifra da ascii a "numero"
 
-        movl numero_tmp, %ebx   # porto il numero salvato finora nel registro ebx
-
-        imull $10, %ebx      # moltiplico il numero letto finora per 10 (per "creare lo spazio" per la cifra appena letta) | (se il numero salvato finora è 0 -> rimane 0)
-        addl %eax, %ebx     # aggiungo la cifra che ho appena letto nello "spazio creto" nel numero letto finora   
-
-        movl %ebx, numero_tmp   # salvo il nuovo numero nella variable riservata per tenerlo in memoria
+        
 
         # printf per conntrollare il numero
 #        movl numero_tmp, %eax

@@ -17,9 +17,10 @@
         cmpb $0, %bl    # controllo se è arrivato alla fine della stringa
         je fine
 
-        subl $48, %bl   # converto la cifra da ascii a valore numerico
+        subb $48, %bl   # converto la cifra da ascii a valore numerico
 
-        mulb $10    # al * costante o registro a 8 bit --> ax (risultato)
+        movb $10, %dl
+        mulb %dl    # al * registro a 8 bit --> ax (risultato)
                     # moltiplico il numero letto finora per 10 (per "creare lo spazio" per la cifra appena letta) | (se il numero salvato finora è 0 -> rimane 0)
 
         addl %ebx, %eax     # aggiungo la cifra (convertita) al valore numrico salvato finora | dopo averne "creato lo spazio" con la mul
@@ -30,4 +31,3 @@
 
     fine:
         ret
-        
