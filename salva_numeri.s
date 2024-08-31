@@ -1,6 +1,6 @@
 .section .data
     ordini_fd: .int -1
-    numero_tmp: .long 0     # per ricostruire il numero
+    numero_tmp: .byte 0     # per ricostruire il numero
     carattere_letto: .byte -1   # carattere letto dalla sys
 #    array_counter: .long 0
 #    contatore_numero_prodotti: .long 0
@@ -50,21 +50,21 @@
     in_range:   # (numero_salvato * 10) + nuova_cifra
         subl $48, %eax  # converto la cifra da ascii a "numero"
 
+        movl numero_tmp, %ebx   # porto il numero salvato finora nel registro ebx
+
+        imull $10, %ebx      # moltiplico il numero letto finora per 10 (per "creare lo spazio" per la cifra appena letta) | (se il numero salvato finora è 0 -> rimane 0)
+        addl %eax, %ebx     # aggiungo la cifra che ho appena letto nello "spazio creto" nel numero letto finora   
+
+        movl %ebx, numero_tmp   # salvo il nuovo numero nella variable riservata per tenerlo in memoria
+
         # printf per conntrollare il numero
-        call converti_int_a_str
-        call stampa_stringa
-        leal a_capo, %eax
-        call stampa_stringa
-        movl carattere_letto, %eax
-        
-#        movl numero_tmp, %ebx
+#        movl numero_tmp, %eax
+#        call converti_int_a_str
+#        call stampa_stringa
+#        leal a_capo, %eax
+#        call stampa_stringa
 
-#        imull $10, %eax
-#        addl %eax, %ebx
-
-#        movl %ebx, numero_tmp
-
-#        jmp read_loop
+        jmp read_loop
 
 
     not_in_number_range:
@@ -75,7 +75,7 @@
 #        je incrementa_numero_prodotti
 
 
-#    salva_in_array:
+#    salva_in_array:    # indirizzo array + contatore x 4       DA SISTEMARE
 #        movb numero_tmp, (array_counter, array)
 #        movl numero_tmp, %eax
 #        call converti_int_a_str

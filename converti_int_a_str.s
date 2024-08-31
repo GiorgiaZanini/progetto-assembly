@@ -6,7 +6,7 @@
     .type converti_int_a_str, @function
 
     converti_int_a_str:
-        # eax contiene il numero
+        # eax contiene il valore numerico (int)
         movl $10, %ecx  # contatore partendo dalla fine
 
         # metto il terminatore nell'ultima posizione dell'array
@@ -18,7 +18,7 @@
         movl $10, %ebx  # per dividere per 10 e prendere l'ultima cifra
         xorl %edx, %edx     # azzera il resto
 
-        # eax -> dividendo (numero)
+        # eax -> dividendo (valore numerico (int))
         # ebx -> divisore (10)
         #     -> indirizzo array --> array + contatore
         # ecx -> contatore cifre
