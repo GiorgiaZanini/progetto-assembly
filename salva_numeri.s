@@ -1,8 +1,9 @@
 .section .data
     ordini_fd: .int -1
-    numero_tmp: .byte 0     # per ricostruire il numero
+#    numero_tmp: .byte 0     # per ricostruire il numero
     carattere_letto: .byte -1   # carattere letto dalla sys
-#    array_counter: .long 0
+    array_numero_counter: .long 0
+    array_counter: .long 0
 #    contatore_numero_prodotti: .long 0
     array_numero: .space 4
     array: .long 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -48,22 +49,48 @@
         jg not_in_number_range    # eax > 9
 
 
-    in_range:   # (numero_salvato * 10) + nuova_cifra
-        subl $48, %eax  # converto la cifra da ascii a "numero"
+    in_range:
+        xorl %ecx, %ecx
+        leal array_numero, %esi
+        movl array_numero_counter, %ecx
 
-        
+        movb %al, (%esi, %ecx)
+        pusha
+#        movl %ecx, array_numero_counter
 
-        # printf per conntrollare il numero
-#        movl numero_tmp, %eax
-#        call converti_int_a_str
-#        call stampa_stringa
-#        leal a_capo, %eax
-#        call stampa_stringa
+        movl %ecx, %eax
+        call converti_int_a_str
+        call stampa_stringa
+        leal a_capo, %eax
+        call stampa_stringa
+
+        popa
+#        movl array_numero_counter, %ecx
+        incl %ecx
+        movl %ecx, array_numero_counter
+
+        pusha
+        movl %ecx, %eax
+        call converti_int_a_str
+        call stampa_stringa
+        leal a_capo, %eax
+        call stampa_stringa
+        popa
+
 
         jmp read_loop
 
 
     not_in_number_range:
+        # printf per conntrollare il numero
+        pusha
+        leal array_numero, %eax
+        call stampa_stringa
+        leal a_capo, %eax
+        call stampa_stringa
+        popa
+
+
 #        cmpl $44, %eax   # ',' ascii
 #        je salva_in_array
 
