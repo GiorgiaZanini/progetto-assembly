@@ -7,14 +7,22 @@
     carattere_letto: .byte -1  # carattere letto dalla sys
     test: .ascii "\0"
     a_capo: .ascii "\n\0"
+    filename:  .asciz "input.txt"
     error_not_in_range: .ascii "Il carattere letto non è un numero\n\0"
 
-.section .text
-    .global salva_numeri
-    .type salva_numeri, @function
 
-    salva_numeri:
+.section .text
+    .global ciao
+    .type ciao, @function
+
+    ciao:
+#        movl $5, %eax   # sys_open
+#        movl $filename, %ebx
+#        movl $0, %ecx   # solo lettura
+#        int $0x80
+
         movl %eax, ordini_fd
+        xorl %ebx, %ebx
 
     read_loop:
         movl $3, %eax        # syscall read
@@ -24,7 +32,7 @@
         int $0x80  
 
         cmpl $1, %eax
-        jne end_read_loop
+        jne not_in_number_range
 
         movb carattere_letto, %al
 
@@ -47,7 +55,7 @@
         movl counter_numero_in_costruzione, %ecx
 
         cmpl $0, %ecx
-        je end_read_loop
+        je exit
 
         movl $numero_in_costruzione, %esi
         movb $0, (%esi, %ecx)
@@ -71,6 +79,5 @@
 
         jmp read_loop
 
-
-    end_read_loop:
+    exit:
         ret
