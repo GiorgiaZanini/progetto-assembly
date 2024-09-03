@@ -29,13 +29,21 @@
 #        addl counter_corrente, %eax
 #        movl (%eax), %eax
 
-        movb (puntatore_array_ordini, counter_corrente), %al
+#        movb (puntatore_array_ordini, counter_corrente), %al
+
+        movl puntatore_array_ordini, %eax
+        movl counter_corrente, %ecx
+        movb (%eax, %ecx), %al
 
 #        movl puntatore_array_ordini, %ebx
 #        addl counter_di_scorrimento, %ebx
 #        movl (%ebx), %ebx
 
-        movb (puntatore_array_ordini, counter_di_scorrimento), %bl
+#        movb (puntatore_array_ordini, counter_di_scorrimento), %bl
+
+        movl puntatore_array_ordini, %ebx
+        movl counter_di_scorrimento, %ecx
+        movb (%eax, %ecx), %bl
 
         # printf
         pusha
