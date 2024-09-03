@@ -37,6 +37,10 @@
 
        movl %eax, ordini_fd
        call ciao
+# QUI POTREI FARE UNA CALL AL MENU
+# ESI CONTIENE L'INDIRIZZO DELL'ARRAY
+# ECX LA DIMENSIONE DELL'ARRAY
+       call ordinamento_EDF
 
        # parametro_2
 #       popl %esi

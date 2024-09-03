@@ -71,13 +71,15 @@
         incl %ecx
         movl %ecx, counter_array_ordini
 
-        movb %al, %bl
-        xorl %eax, %eax
-        movb %bl, %al
-        call converti_int_a_str
-        call stampa_stringa
+#        movb %al, %bl
+#        xorl %eax, %eax
+#        movb %bl, %al
+#        call converti_int_a_str
+#        call stampa_stringa
 
         jmp read_loop
 
     exit:
+        leal array_ordini, %esi
+        movl counter_array_ordini, %ecx
         ret
