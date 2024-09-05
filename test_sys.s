@@ -1,12 +1,13 @@
 .section .data
     ordini_fd: .int -1
     numero_in_costruzione: .space 4
-    counter_numero_in_costruzione: .long 0
-    array_ordini: .space 40
+    counter_numero_in_costruzione: .int 0
+    array_ordini: .space 40, 7
     counter_array_ordini: .long 0
     carattere_letto: .byte -1  # carattere letto dalla sys
     test: .ascii "\0"
     a_capo: .ascii "\n\0"
+    line: .ascii "-\0"
     filename:  .asciz "input.txt"
     error_not_in_range: .ascii "Il carattere letto non è un numero\n\0"
 
@@ -67,19 +68,48 @@
         movl counter_array_ordini, %ecx
         movl $array_ordini, %esi
 
+    #    pusha
+    #    movl %eax, %eax
+    #    call converti_int_a_str
+    #    call stampa_stringa
+    #    popa
+
         movb %al, (%esi, %ecx)
+
         incl %ecx
         movl %ecx, counter_array_ordini
 
+#        pusha
+#        leal array_ordini, %eax
+#        call stampa_array
+#        leal a_capo, %eax
+#        call stampa_stringa
+#        popa
+
+#        pusha
 #        movb %al, %bl
 #        xorl %eax, %eax
 #        movb %bl, %al
 #        call converti_int_a_str
 #        call stampa_stringa
-
+#        leal a_capo, %eax
+#        call stampa_stringa
+#        popa
+#        
         jmp read_loop
 
     exit:
+#        pusha
+#        movl counter_array_ordini, %eax
+#        call converti_int_a_str
+#        call stampa_stringa
+#        leal a_capo, %eax
+#        call stampa_stringa
+#        leal array_ordini, %eax
+#        movl counter_array_ordini, %ecx
+#        call stampa_array
+#        popa
+
         leal array_ordini, %esi
         movl counter_array_ordini, %ecx
         ret
