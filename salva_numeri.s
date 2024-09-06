@@ -1,13 +1,16 @@
 .section .data
     ordini_fd: .int -1
     numero_in_costruzione: .space 4
-    counter_numero_in_costruzione: .long 0
-    array_ordini: .space 40
+    counter_numero_in_costruzione: .int 0
+    array_ordini: .space 40, 7
     counter_array_ordini: .long 0
     carattere_letto: .byte -1  # carattere letto dalla sys
     test: .ascii "\0"
     a_capo: .ascii "\n\0"
+    line: .ascii "-\0"
+    filename:  .asciz "input.txt"
     error_not_in_range: .ascii "Il carattere letto non è un numero\n\0"
+
 
 .section .text
     .global salva_numeri
@@ -15,6 +18,7 @@
 
     salva_numeri:
         movl %eax, ordini_fd
+        xorl %ebx, %ebx
 
     read_loop:
         movl $3, %eax        # syscall read
@@ -24,7 +28,7 @@
         int $0x80  
 
         cmpl $1, %eax
-        jne end_read_loop
+        jne not_in_number_range
 
         movb carattere_letto, %al
 
@@ -47,7 +51,7 @@
         movl counter_numero_in_costruzione, %ecx
 
         cmpl $0, %ecx
-        je end_read_loop
+        je exit
 
         movl $numero_in_costruzione, %esi
         movb $0, (%esi, %ecx)
@@ -60,17 +64,11 @@
         movl $array_ordini, %esi
 
         movb %al, (%esi, %ecx)
+
         incl %ecx
         movl %ecx, counter_array_ordini
-
-        movb %al, %bl
-        xorl %eax, %eax
-        movb %bl, %al
-        call converti_int_a_str
-        call stampa_stringa
-
+    
         jmp read_loop
 
-
-    end_read_loop:
+    exit:
         ret

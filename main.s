@@ -36,18 +36,11 @@
        jl errore_file
 
        movl %eax, ordini_fd
-       call ciao
+       call salva_numeri
 # QUI POTREI FARE UNA CALL AL MENU
 # ESI CONTIENE L'INDIRIZZO DELL'ARRAY
 # ECX LA DIMENSIONE DELL'ARRAY
-        pusha
-        movl %esi, %eax
-        call stampa_array
-        leal a_capo, %eax
-        call stampa_stringa
-        popa
-        
-        call ordinamento_EDF
+       call ordinamento_EDF
 
        # parametro_2
 #       popl %esi
