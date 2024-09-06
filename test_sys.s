@@ -110,6 +110,21 @@
 #        call stampa_array
 #        popa
 
+        pusha
+        leal array_ordini, %eax
+        movl counter_array_ordini, %ecx
+        call stampa_array
+        leal a_capo, %eax
+        call stampa_stringa
+        popa
+
         leal array_ordini, %esi
         movl counter_array_ordini, %ecx
+
+        pusha
+        movl %esi, %eax
+        call stampa_array
+        leal a_capo, %eax
+        call stampa_stringa
+        popa
         ret
