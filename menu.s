@@ -2,26 +2,40 @@
     input: .space 4         	# Spazio per l'input
 
 .section .data
+    ordini_fd: .long -1
+    pianificazione_fd: .long -1
+    array_ordini: .long 0
+    counter_array_ordini: .long 0
+
+    a_capo: .ascii "\n\0"
+    edf: .ascii "Pianificazione EDF:\n\0"
+    hpf: .ascii "Pianificazione HPF:\n\0"
+
+
     RScelta: .byte 0         	# Variabile per memorizzare la scelta
     Scelta:
-        .ascii "Scegli se usare l'algoritmo \n1. EDF (Earliest Deadline First) \n2. HPF (Highest Priority First).\n\0"
+        .ascii "Scegli se usare l'algoritmo \n1. EDF (Earliest Deadline First) \n2. HPF (Highest Priority First). \n3. Esci\n\0"
     SceltaNonValida:
         .ascii "Scelta non valida.\n\0"
         
 .section .text
-    .global _menu
-    .type _menu, @function
+    .global menu
+    .type menu, @function
 
-_menu:
-	push %ebp
-	movl %esp, %ebp
+menu:
+	movl %eax, ordini_fd
+    movl %ebx, pianificazione_fd
+    movl %esi, array_ordini
+    movl %ecx, counter_array_ordini
 
-_PrimaRichiestaInput:
-    # Stampa la stringa di richiesta dell'algoritmo
+leggi_input:
     leal Scelta, %eax
-    call stampa_stringa
 
-_input:
+    pusha
+    movl $-1, %ebx
+    call stampa_stringa
+    popa
+
     # Legge l'input dell'algoritmo scelto
     movl $3, %eax            	# sys_read
     movl $0, %ebx            	# File descriptor 0
@@ -31,44 +45,104 @@ _input:
 
     # Verifica se il primo carattere è (1 o 2)
     movb input, %al          	# Carica il primo carattere in %al
-    subb $0x30, %al          	# Viene Convertito in int
+    subb $48, %al          	    # Viene Convertito in int
     cmpb $1, %al             	# Confronta se e 1
     je _ControlloLunghezza   	# Se è 1, controlla la lunghezza
     cmpb $2, %al             	# Confronta se e 2
+    je _ControlloLunghezza   	# Se è 2, controlla la lunghezza
+    cmpb $3, %al             	# Confronta se e 2
     je _ControlloLunghezza   	# Se è 2, controlla la lunghezza
     jmp _InputNonValido      	# Altrimenti, input non valido
 
 _ControlloLunghezza:
     # Verifica se c'è un altro carattere (input lungo più di una cifra)
     movb input+1, %bl        	# Carica il secondo carattere in %bl
-    cmpb $0xA, %bl           	# Verifica se è un newline (\n)
-    je _MemorizzaScelta      
+    cmpb $10, %bl           	# Verifica se è un newline (\n)
+    je esegui_comando      
     cmpb $0, %bl             	# Verifica se è il terminatore di stringa (NUL)
-    je _MemorizzaScelta      
+    je esegui_comando      
     jmp _InputNonValido     	# Se c'è piu di un carattere, l'input non valido
 
-_MemorizzaScelta:
-   # Memorizzo la scelta in %eax
-   movb input, %al		# Prendo il primo byte
-   subb $0x30, %al		# Viene convertito in int
-   jmp _fine
+esegui_comando:
+    pusha
+    leal a_capo, %eax
+    movl $-1, %ebx
+    call stampa_stringa
+    popa
+
+    movl array_ordini, %esi
+    movl counter_array_ordini, %ecx
+
+    cmpb $1, %al
+    je ordina_EDF
+
+    cmpb $2, %al
+    je ordina_HPF
+
+    movl ordini_fd, %eax
+    movl pianificazione_fd, %ebx
+    call termina_programma    
 
 _InputNonValido:
+    pusha
     leal SceltaNonValida, %eax
+    movl pianificazione_fd, %ebx
     call stampa_stringa
-    jmp _input
-    
-_fine:
-	movl %ebp, %esp		# Ripristino il vecchio stack frame
-	pop %ebp		# Ripristino il frame pointer
-	ret			# Ritorno con %eax che contiene la scelta
-	
-	
-	
-#	DA AGGIUNGERE AL MAIN
-#ControlloScelta:
-#	call menu		# Chiama la funzione Menu
-#	cmp $1, %eax		# Controllo se l'utente ha scelto l'algoritmo EDF
-#	je _EDF
-#	cmp $2, %eax		# Controllo se l'utente ha scelto l'algoritmo HPF
-#	je _HPF
+    popa
+
+    jmp leggi_input
+
+ordina_EDF:
+    pusha
+    leal edf, %eax
+    movl pianificazione_fd, %ebx
+    call stampa_stringa
+    popa
+
+    movl ordini_fd, %eax
+    movl pianificazione_fd, %ebx
+    movl counter_array_ordini, %ecx
+    movl array_ordini, %esi
+    call ordinamento_EDF
+
+    movl ordini_fd, %eax
+    movl pianificazione_fd, %ebx
+    movl counter_array_ordini, %ecx
+    movl array_ordini, %esi
+    call elabora_ordini
+
+    pusha
+    leal a_capo, %eax
+    movl pianificazione_fd, %ebx
+    call stampa_stringa
+    popa
+
+    jmp leggi_input
+
+ ordina_HPF:
+    pusha
+    leal hpf, %eax
+    movl pianificazione_fd, %ebx
+    call stampa_stringa
+    popa
+
+    movl ordini_fd, %eax
+    movl pianificazione_fd, %ebx
+    movl counter_array_ordini, %ecx
+    movl array_ordini, %esi
+    call ordinamento_HPF
+
+    movl ordini_fd, %eax
+    movl pianificazione_fd, %ebx
+    movl counter_array_ordini, %ecx
+    movl array_ordini, %esi 
+    call elabora_ordini   
+
+    pusha
+    leal a_capo, %eax
+    movl pianificazione_fd, %ebx
+    call stampa_stringa
+    popa
+
+    jmp leggi_input
+

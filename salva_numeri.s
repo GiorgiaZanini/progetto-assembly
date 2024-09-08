@@ -1,6 +1,6 @@
 .section .data
-    ordini_fd: .int -1
-    pianificazione_fd: .int -1
+    ordini_fd: .long -1
+    pianificazione_fd: .long -1
     numero_in_costruzione: .space 4
     counter_numero_in_costruzione: .long 0
     array_ordini: .space 40
@@ -31,14 +31,14 @@
     read_loop:
         movl $3, %eax        # syscall read
         movl ordini_fd, %ebx         # File descriptor
-        movl $carattere_letto, %ecx
+        leal carattere_letto, %ecx
         movl $1, %edx        # Lunghezza massima
         int $0x80  
 
         cmpl $1, %eax
         jne not_in_number_range
 
-        movb carattere_letto, %al
+        movb carattere_letto, %al 
 
         cmpb $48, %al   # 0 ascii
         jl not_in_number_range     # eax < "0"
@@ -141,54 +141,75 @@
     errore_identificativo:
         pusha
         leal errore_identificativo_str, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         popa
+        pusha
         call converti_int_a_str
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         leal a_capo, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
+        popa
 
         jmp termina
 
     errore_durata:
         pusha
         leal errore_durata_str, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         popa
+        pusha
         call converti_int_a_str
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         leal a_capo, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
+        popa
 
         jmp termina
 
     errore_scadenza:
         pusha
         leal errore_scadenza_str, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         popa
+        pusha
         call converti_int_a_str
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         leal a_capo, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
+        popa
 
         jmp termina
 
     errore_priority:
         pusha
         leal errore_priority_str, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         popa
+        pusha
         call converti_int_a_str
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         leal a_capo, %eax
-        call stampa_stringa    
+        movl pianificazione_fd, %ebx
+        call stampa_stringa  
+        popa  
 
         jmp termina 
 
     errore_ordini:   
         pusha
         leal errore_ordini_str, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         popa
 

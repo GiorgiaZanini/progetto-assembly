@@ -3,8 +3,6 @@
     counter_array_ordini: .long 0
     counter_corrente: .long 3   # quarta posizione
 
-    a_capo: .ascii "\n\0"
-
 .section .text
     .global ordinamento_HPF
     .type ordinamento_HPF, @function
@@ -55,7 +53,6 @@
 
     inverti_numeri:
         # pusho il secondo ordine nello stack
-#        addl $1, %edx
         movb (%esi, %edx), %bl
         pushl %ebx
 
@@ -111,14 +108,6 @@
 
         # ripristino l'indice dell'array alla terza casella del secondo ordine
         addl $4, %edx
-
-        pusha
-        movl %esi, %eax
-        movl counter_array_ordini, %ecx
-        call stampa_array
-        leal a_capo, %eax
-        call stampa_stringa
-        popa
 
         jmp controllo_bubble_sort  
 

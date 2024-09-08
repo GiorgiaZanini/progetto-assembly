@@ -1,14 +1,15 @@
 .section .data
+    pianificazione_fd: .long -1
     puntatore_array_ordini: .long 0     # puntatore all'array dove sono salvati i numeri
     dimensione_array_ordini: .long 0
     tempo: .long 0   
     counter: .long 0
-    penality: .long 0
+    penalty: .long 0
 
     tempo_max: .long 100
     due_punti: .ascii ":\0"
     conclusione_str: .ascii "Conclusione: \0"
-    penanlty_str: .ascii "Penalty: \0"
+    penanlty_str: .ascii "penalty: \0"
 
     ok: .ascii "i numeri sono nell'ordine corretto\n\0"
     inverti: .ascii "i numeri sono da scambiare\n\0"
@@ -21,8 +22,13 @@
 
     elabora_ordini:
         # esi contiene il puntatore a array_ordini
+        movl %ebx, pianificazione_fd
         movl %esi, puntatore_array_ordini
         movl %ecx, dimensione_array_ordini
+
+        movl $0, counter
+        movl $0, tempo
+        movl $0, penalty
 
     ciclo_elaborazione:
         xorl %eax, %eax
@@ -37,15 +43,19 @@
         pusha
         movb (%esi, %edx), %al
         call converti_int_a_str
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         popa
         pusha
         leal due_punti, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         movl tempo, %eax
         call converti_int_a_str
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         leal a_capo, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         popa
 
@@ -60,7 +70,7 @@
         movb (%esi, %edx), %bl 
 
         cmpl %ebx, %eax
-        jg calcola_penality
+        jg calcola_penalty
 
     prepara_prossimo_ciclo:    
         movl counter, %edx
@@ -69,7 +79,7 @@
 
         jmp ciclo_elaborazione
 
-    calcola_penality:
+    calcola_penalty:
         subl %ebx, %eax
 
         addl $1, %edx
@@ -77,30 +87,36 @@
 
         mull %ebx
 
-        movl penality, %ebx
+        movl penalty, %ebx
         addl %ebx, %eax
-        movl %eax, penality
+        movl %eax, penalty
 
         jmp prepara_prossimo_ciclo
 
     fine:
         pusha
         leal conclusione_str, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         movl tempo, %eax
         call converti_int_a_str
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         leal a_capo, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         popa
 
         pusha
         leal penanlty_str, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
-        movl penality, %eax
+        movl penalty, %eax
         call converti_int_a_str
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         leal a_capo, %eax
+        movl pianificazione_fd, %ebx
         call stampa_stringa
         popa
 

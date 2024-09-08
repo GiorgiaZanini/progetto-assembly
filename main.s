@@ -1,9 +1,10 @@
 .section .data
-    ordini_fd: .int -1
-    pianificazione_fd: .int -1
+    ordini_fd: .long -1
+    pianificazione_fd: .long -1
+    counter_parametri: .long 0
 
-    errore_parametri: .ascii "Errore: parametri di input mancanti\n\0"
-    errore_apertura_file: .ascii "Errore: apertura file\n\0"
+    errore_input_str: .ascii "Errore nei parametri passati in input\n\0"
+    errore_file_str: .ascii "Errore nell'apertura del file\n\0"
 
     # temporaneo per testare
     a_capo: .ascii "\n\0"
@@ -13,49 +14,85 @@
     .global _start
 
     _start:
-#       popl %esi
-#       popl %esi
+       # poppo il numero di argomenti in input
+       popl %esi
+       movl %esi, counter_parametri
 
-       # parametro_1
-#       popl %esi
+       # ignoro il nome del programma
+       popl %esi 
 
-       # Se il parametro_1 non è vuoto -> apri il file
-#       testl %esi, %esi
-#       jz errore_parametri
+       # poppo il file degli ordini
+       popl %esi
 
-       # Apri il file del parametro_1
+       cmpl $0, %esi
+       je errore_input
+
+       # apro il file degli ordini
        movl $5, %eax   # sys_open
-       movl $filename, %ebx     # temporaneo per testare
-#       movl %esi, %ebx # nome file
+       movl %esi, %ebx     
        movl $0, %ecx   # solo lettura
        int $0x80
-       # salva poi in eax il file descriptor
 
-       # Se il file descriptor è null -> errore
-       cmp $0, %eax
+       cmpl $-1, %eax
        jl errore_file
 
-
-
-
-       # ################## #
-
        movl %eax, ordini_fd
-       movl %ebx, pianificazione_fd
+
+       # verifico il numero di parametri passati da linea di comando. Se non sono 3 (eseguibile, file_ordini, file_pianificazione) inizio ad elaborara
+       movl counter_parametri, %ebx
+       cmpl $3, %ebx
+       jne inizia_elaborazione
+
+       popl %esi       
+
+       cmpl $0, %esi
+       je errore_input
+
+       # apro il file di pianificazione
+       movl $5, %eax   # sys_open
+       movl %esi, %ebx     
+       movl $1, %ecx   # solo scrittura
+       int $0x80
+
+       cmpl $-1, %eax
+       jl errore_file
+
+       movl %eax, pianificazione_fd
+
+    inizia_elaborazione:
+       movl ordini_fd, %eax
+       movl pianificazione_fd, %ebx
 
        call salva_numeri
+
+       movl ordini_fd, %eax
+       movl pianificazione_fd, %ebx
+       call menu
        
-       call ordinamento_EDF
-       call elabora_ordini
+       # call ordinamento_EDF
+       # call elabora_ordini
+
+    errore_input:
+       pusha
+       leal errore_input_str, %eax
+       movl pianificazione_fd, %ebx
+       call stampa_stringa
+       popa
+
+       movl ordini_fd, %eax
+       movl pianificazione_fd, %ebx
+       call termina_programma
 
     errore_file:
-       call converti_int_a_str
+       pusha
+       leal errore_file_str, %eax
+       movl pianificazione_fd, %ebx
        call stampa_stringa
-       leal a_capo, %eax
-       call stampa_stringa
+       popa
 
-       leal errore_apertura_file, %eax
-       call stampa_stringa
+       movl ordini_fd, %eax
+       movl pianificazione_fd, %ebx
+       call termina_programma
 
     exit:
        movl ordini_fd, %eax
