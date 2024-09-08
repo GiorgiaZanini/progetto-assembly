@@ -13,7 +13,8 @@ as stampa_stringa.s -32 -o stampa_stringa.o
 as converti_str_a_int.s -32 -o converti_str_a_int.o
 as converti_int_a_str.s -32 -o converti_int_a_str.o
 as stampa_array.s -32 -o stampa_array.o
-ld main.o salva_numeri.o ordinamento_EDF.o stampa_stringa.o converti_str_a_int.o converti_int_a_str.o stampa_array.o -m elf_i386 -o main_2.x
+as elabora_ordini.s -32 -o elabora_ordini.o
+ld main.o salva_numeri.o ordinamento_EDF.o stampa_stringa.o converti_str_a_int.o converti_int_a_str.o stampa_array.o elabora_ordini.o -m elf_i386 -o main_2.x
 ./main_2.x 
 
 # as main_test_stinga.s -32 -o main_test_stinga.o

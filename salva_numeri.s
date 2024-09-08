@@ -67,8 +67,10 @@
 
         incl %ecx
         movl %ecx, counter_array_ordini
-    
+   
         jmp read_loop
 
     exit:
+        leal array_ordini, %esi
+        movl counter_array_ordini, %ecx
         ret

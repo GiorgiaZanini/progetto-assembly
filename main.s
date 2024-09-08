@@ -42,6 +42,8 @@
 # ECX LA DIMENSIONE DELL'ARRAY
        call ordinamento_EDF
 
+       call elabora_ordini
+
        # parametro_2
 #       popl %esi
 
