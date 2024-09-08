@@ -35,38 +35,18 @@
        cmp $0, %eax
        jl errore_file
 
+
+
+
+       # ################## #
+
        movl %eax, ordini_fd
+       movl %ebx, pianificazione_fd
+
        call salva_numeri
-# QUI POTREI FARE UNA CALL AL MENU
-# ESI CONTIENE L'INDIRIZZO DELL'ARRAY
-# ECX LA DIMENSIONE DELL'ARRAY
+       
        call ordinamento_EDF
-
        call elabora_ordini
-
-       # parametro_2
-#       popl %esi
-
-       # Se il parametro_2 non è vuoto -> apri il file
-#       testl %esi, %esi
-       # jz endParams
-
-       # Apri il file del parametro_2
-#       movl $5, %eax   # Syscall open
-#       movl %esi, %ebx # Nome del file
-#       movl $1, %ecx   # Modalità scrittura
-#       int $0x80
-
-#       cmp $0, %eax
-#       jl errore_apertura_file
-
-#       movl %eax, pianificazione_fd
-
-    exit:
-       # sys_exit
-       movl $1, %eax
-       xorl %ebx, %ebx
-       int $0x80
 
     errore_file:
        call converti_int_a_str
@@ -76,4 +56,8 @@
 
        leal errore_apertura_file, %eax
        call stampa_stringa
-       jmp exit
+
+    exit:
+       movl ordini_fd, %eax
+       movl pianificazione_fd, %ebx
+       call termina_programma

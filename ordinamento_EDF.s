@@ -1,10 +1,6 @@
-# scadenza (terzo numero)
-# crescente
-# bubble sort
-
 .section .data
     puntatore_array_ordini: .long 0     # puntatore all'array dove sono salvati i numeri
-    indice_max_array_ordini: .long 0
+    counter_array_ordini: .long 0
     counter_corrente: .long 2   # terza posizione
 
     ok: .ascii "i numeri sono nell'ordine corretto\n\0"
@@ -19,7 +15,7 @@
     ordinamento_EDF:
         # esi contiene il puntatore a array_ordini
         movl %esi, puntatore_array_ordini
-        movl %ecx, indice_max_array_ordini
+        movl %ecx, counter_array_ordini
 
         movl counter_corrente, %edx
 
@@ -131,7 +127,7 @@
 
         pusha
         movl %esi, %eax
-        movl indice_max_array_ordini, %ecx
+        movl counter_array_ordini, %ecx
         call stampa_array
         leal a_capo, %eax
         call stampa_stringa
@@ -156,5 +152,5 @@
 
     fine:
         movl puntatore_array_ordini, %esi
-        movl puntatore_array_ordini, %eax
+        movl counter_array_ordini, %ecx
         ret
