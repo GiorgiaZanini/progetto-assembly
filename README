@@ -5,7 +5,8 @@ per compilare ed eseguire tramite il Makefile
 
 comando da terminale per compilare: make
 comando da terminale per pulire la cartella obj: make clean
-comando da terminale per eseguire: ./bin/pianificatore ./Ordini/Ordini.txt 
+comando da terminale per eseguire per un file di input: ./bin/pianificatore ./Ordini/Ordini.txt
+comando da terminale per eseguire per un file di input e uno di destinazione: ./bin/pianificatore ./Ordini/Ordini.txt ./Ordini/Pianificazione.txt 
 
 
 
