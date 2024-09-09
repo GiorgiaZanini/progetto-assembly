@@ -1,0 +1,30 @@
+Pianificazione HPF:
+7:0
+12:10
+17:17
+18:27
+127:29
+19:39
+Conclusione: 47
+Penalty: 14
+
+Pianificazione EDF:
+7:0
+12:10
+127:17
+17:27
+18:37
+19:39
+Conclusione: 47
+Penalty: 0
+
+Pianificazione HPF:
+7:0
+12:10
+17:17
+18:27
+127:29
+19:39
+Conclusione: 47
+Penalty: 14
+

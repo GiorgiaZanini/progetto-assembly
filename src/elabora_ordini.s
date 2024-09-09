@@ -3,7 +3,7 @@
     puntatore_array_ordini: .long 0     # puntatore all'array dove sono salvati i numeri
     dimensione_array_ordini: .long 0
     tempo: .long 0   
-    counter: .long 0
+    counter: .long 0    # punta al primo valore dell'ordine successivo (a ogni iterazione viene incrementato di 4)
     penalty: .long 0
 
     due_punti: .ascii ":\0"
@@ -22,6 +22,7 @@
         movl %esi, puntatore_array_ordini
         movl %ecx, dimensione_array_ordini
 
+        # riazzero valori, perché la funzione, se richiamata, contiene ancora i valori del calcolo precedente
         movl $0, counter
         movl $0, tempo
         movl $0, penalty
@@ -33,6 +34,7 @@
         movl counter, %edx
         movl dimensione_array_ordini, %ecx
 
+        # se counter ha raggiunto la dimensione massima, è arrivato alla fine degli ordini
         cmpl %ecx, %edx
         jge fine
 
@@ -59,18 +61,20 @@
         # incremento il tempo della durata dell'ordine corrente. Ora ho il termpo di fine dell'ordine/inizio del successivo
         movl tempo, %eax
         addl $1, %edx
-        movb (%esi, %edx), %bl 
+        movb (%esi, %edx), %bl  # prendo la durata (secondo valore dell'ordine) per sommarla al tempo
 
         addl %ebx, %eax
         movl %eax, tempo
 
         addl $1, %edx
-        movb (%esi, %edx), %bl 
+        movb (%esi, %edx), %bl  # predo la scadenda (terzo valore dell'ordine), per controllare se è oltre l'unità di tempo in cui è finita la produzione di questo prodotto è oltre la scadenza
 
         cmpl %ebx, %eax
-        jg calcola_penalty
+        jg calcola_penalty  # se tempo > scadenza, calcolo la penalità
 
     prepara_prossimo_ciclo:    
+        # risetto il counter (edx) al primo valore dell'ordine appena eseguito, 
+        # e lo incremento affinché corrisponda al primo valore dell'ordine successivo (ovvero quello che devo calcolare)
         movl counter, %edx
         addl $4, %edx
         movl %edx, counter
@@ -78,15 +82,16 @@
         jmp ciclo_elaborazione
 
     calcola_penalty:
-        subl %ebx, %eax
+        # priorità * (tempo_fine - scadenza)
+        subl %ebx, %eax     # tempo - scadenza
 
         addl $1, %edx
-        movb (%esi, %edx), %bl 
+        movb (%esi, %edx), %bl      # predo la priorità (quarto valore dell'ordine)
 
         mull %ebx
 
         movl penalty, %ebx
-        addl %ebx, %eax
+        addl %ebx, %eax         # aggiorno penalty, sommando al valore calcolato finora
         movl %eax, penalty
 
         jmp prepara_prossimo_ciclo

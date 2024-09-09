@@ -1,5 +1,5 @@
 .section .bss
-    input: .space 4         	# Spazio per l'input
+    input: .space 2         	# Spazio per l'input
 
 .section .data
     ordini_fd: .long -1
@@ -11,12 +11,8 @@
     edf: .ascii "Pianificazione EDF:\n\0"
     hpf: .ascii "Pianificazione HPF:\n\0"
 
-
-    RScelta: .byte 0         	# Variabile per memorizzare la scelta
-    Scelta:
-        .ascii "Scegli se usare l'algoritmo \n1. EDF (Earliest Deadline First) \n2. HPF (Highest Priority First) \n3. Esci\n\0"
-    SceltaNonValida:
-        .ascii "Scelta non valida.\n\0"
+    scelta: .ascii "Scegli se usare l'algoritmo \n1. EDF (Earliest Deadline First) \n2. HPF (Highest Priority First) \n3. Esci\n\0"
+    scelta_non_valida: .ascii "\nErrore: scelta non valida (inserire un valore compreso tra 1 e 3)\n\n\0"
         
 .section .text
     .global menu
@@ -29,7 +25,7 @@ menu:
     movl %ecx, counter_array_ordini
 
 leggi_input:
-    leal Scelta, %eax
+    leal scelta, %eax
 
     pusha
     movl $-1, %ebx
@@ -85,7 +81,7 @@ esegui_comando:
 
 input_non_valido:
     pusha
-    leal SceltaNonValida, %eax
+    leal scelta_non_valida, %eax
     movl $-1, %ebx
     call stampa_stringa
     popa
@@ -139,4 +135,3 @@ ordina_EDF:
     popa
 
     jmp leggi_input
-
