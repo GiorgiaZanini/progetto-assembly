@@ -34,7 +34,7 @@
        int $0x80
 
        cmpl $-1, %eax
-       jl errore_file
+       jle errore_file
 
        movl %eax, ordini_fd
 
@@ -54,8 +54,8 @@
        movl $1, %ecx   # solo scrittura
        int $0x80
 
-       cmpl $-1, %eax
-       jl errore_file
+       cmpl $-1, %eax   # se è -1 o meno è un errore
+       jle errore_file
 
        movl %eax, pianificazione_fd
 

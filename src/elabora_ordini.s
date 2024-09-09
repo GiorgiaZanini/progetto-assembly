@@ -8,7 +8,7 @@
 
     due_punti: .ascii ":\0"
     conclusione_str: .ascii "Conclusione: \0"
-    penanlty_str: .ascii "penalty: \0"
+    penanlty_str: .ascii "Penalty: \0"
 
     a_capo: .ascii "\n\0"
 
@@ -36,6 +36,7 @@
         cmpl %ecx, %edx
         jge fine
 
+        # stampa id prodotto : tempo di inizo \n (e scrive su file)
         pusha
         movb (%esi, %edx), %al
         call converti_int_a_str
@@ -55,6 +56,7 @@
         call stampa_stringa
         popa
 
+        # incremento il tempo della durata dell'ordine corrente. Ora ho il termpo di fine dell'ordine/inizio del successivo
         movl tempo, %eax
         addl $1, %edx
         movb (%esi, %edx), %bl 

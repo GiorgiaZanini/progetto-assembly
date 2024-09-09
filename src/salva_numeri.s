@@ -47,7 +47,7 @@
 
     costruisci_numero:
         movl counter_numero_in_costruzione, %ecx
-        movl $numero_in_costruzione, %esi
+        leal numero_in_costruzione, %esi
         movb %al, (%esi, %ecx)
 
         incl %ecx
@@ -61,30 +61,30 @@
         cmpl $0, %ecx
         je ritorna
 
-        movl $numero_in_costruzione, %esi
-        movb $0, (%esi, %ecx)
+        leal numero_in_costruzione, %esi
+        movb $0, (%esi, %ecx)   # aggiungo il terminatore alla stringa numero_in_costruzione
         movl $0, counter_numero_in_costruzione
 
         movl %esi, %eax
         call converti_str_a_int
 
         # salvo sulla stack il nuove numero completo letto dal file
-        push %eax
+        pushl %eax
 
         # verifico a che parametro dell'ordine corrisponde il nuovo numero
         xorl %edx, %edx
         movl counter_array_ordini, %eax
-        movl $10, %ebx
+        movl $4, %ebx
         divl %ebx
 
         cmpl $0, %edx
         je controlla_identificativo
         cmpl $1, %edx
-        je controlla_identificativo
+        je controlla_durata
         cmpl $2, %edx
-        je controlla_identificativo
+        je controlla_scadenza
         cmpl $3, %edx
-        je controlla_identificativo
+        je controlla_priority
 
     controlla_identificativo:
         popl %eax
@@ -124,15 +124,11 @@
 
     salva_numero_in_array_ordini:
         movl counter_array_ordini, %ecx
-        movl $array_ordini, %esi
+        leal array_ordini, %esi
 
         movb %al, (%esi, %ecx)
         incl %ecx
         movl %ecx, counter_array_ordini
-
-        movb %al, %bl
-        xorl %eax, %eax
-        movb %bl, %al
 
         jmp read_loop
 
@@ -225,7 +221,7 @@
         je errore_ordini
 
         xorl %edx, %edx
-        movl $24, %eax
+        movl counter_array_ordini, %eax
         movl $4, %ebx
         divl %ebx
 

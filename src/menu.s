@@ -14,7 +14,7 @@
 
     RScelta: .byte 0         	# Variabile per memorizzare la scelta
     Scelta:
-        .ascii "Scegli se usare l'algoritmo \n1. EDF (Earliest Deadline First) \n2. HPF (Highest Priority First). \n3. Esci\n\0"
+        .ascii "Scegli se usare l'algoritmo \n1. EDF (Earliest Deadline First) \n2. HPF (Highest Priority First) \n3. Esci\n\0"
     SceltaNonValida:
         .ascii "Scelta non valida.\n\0"
         
@@ -37,31 +37,34 @@ leggi_input:
     popa
 
     # Legge l'input dell'algoritmo scelto
-    movl $3, %eax            	# sys_read
-    movl $0, %ebx            	# File descriptor 0
-    movl $input, %ecx        	# Buffer dove salvare l'input
-    movl $4, %edx            	# Numero massimo di byte da leggere
+    movl $3, %eax   # sys_read da terminale
+    movl $0, %ebx
+    leal input, %ecx    # buffer dove salvare l'input
+    movl $2, %edx   # numero massimo di byte da leggere
     int $0x80                
 
-    # Verifica se il primo carattere è (1 o 2)
-    movb input, %al          	# Carica il primo carattere in %al
-    subb $48, %al          	    # Viene Convertito in int
-    cmpb $1, %al             	# Confronta se e 1
-    je _ControlloLunghezza   	# Se è 1, controlla la lunghezza
-    cmpb $2, %al             	# Confronta se e 2
-    je _ControlloLunghezza   	# Se è 2, controlla la lunghezza
-    cmpb $3, %al             	# Confronta se e 2
-    je _ControlloLunghezza   	# Se è 2, controlla la lunghezza
-    jmp _InputNonValido      	# Altrimenti, input non valido
+    xorl %edx, %edx
 
-_ControlloLunghezza:
-    # Verifica se c'è un altro carattere (input lungo più di una cifra)
-    movb input+1, %bl        	# Carica il secondo carattere in %bl
-    cmpb $10, %bl           	# Verifica se è un newline (\n)
+    # Verifica se il primo carattere è (1 o 2)
+    movb (%ecx,%edx), %al
+    subb $48, %al   # numero in input viene convertito in int
+    cmpb $1, %al
+    je controllo_lunghezza
+    cmpb $2, %al
+    je controllo_lunghezza
+    cmpb $3, %al
+    je controllo_lunghezza
+    jmp input_non_valido    # se non supera i controlli cmp non è un numero valido
+
+controllo_lunghezza:
+    # controlla che un'eventuale secondo carattere sia \n o \0
+    incl %edx
+    movb (%ecx,%edx), %bl   # Carica il secondo carattere in %bl
+    cmpb $10, %bl   # \n
     je esegui_comando      
-    cmpb $0, %bl             	# Verifica se è il terminatore di stringa (NUL)
+    cmpb $0, %bl    # \0
     je esegui_comando      
-    jmp _InputNonValido     	# Se c'è piu di un carattere, l'input non valido
+    jmp input_non_valido    # senno non è un carattere valido
 
 esegui_comando:
     pusha
@@ -69,9 +72,6 @@ esegui_comando:
     movl $-1, %ebx
     call stampa_stringa
     popa
-
-    movl array_ordini, %esi
-    movl counter_array_ordini, %ecx
 
     cmpb $1, %al
     je ordina_EDF
@@ -83,7 +83,7 @@ esegui_comando:
     movl pianificazione_fd, %ebx
     call termina_programma    
 
-_InputNonValido:
+input_non_valido:
     pusha
     leal SceltaNonValida, %eax
     movl $-1, %ebx
@@ -99,13 +99,10 @@ ordina_EDF:
     call stampa_stringa
     popa
 
-    movl ordini_fd, %eax
-    movl pianificazione_fd, %ebx
     movl counter_array_ordini, %ecx
     movl array_ordini, %esi
     call ordinamento_EDF
 
-    movl ordini_fd, %eax
     movl pianificazione_fd, %ebx
     movl counter_array_ordini, %ecx
     movl array_ordini, %esi
@@ -126,13 +123,10 @@ ordina_EDF:
     call stampa_stringa
     popa
 
-    movl ordini_fd, %eax
-    movl pianificazione_fd, %ebx
     movl counter_array_ordini, %ecx
     movl array_ordini, %esi
     call ordinamento_HPF
 
-    movl ordini_fd, %eax
     movl pianificazione_fd, %ebx
     movl counter_array_ordini, %ecx
     movl array_ordini, %esi 
