@@ -6,14 +6,10 @@
     counter: .long 0
     penalty: .long 0
 
-    tempo_max: .long 100
     due_punti: .ascii ":\0"
     conclusione_str: .ascii "Conclusione: \0"
     penanlty_str: .ascii "penalty: \0"
 
-    ok: .ascii "i numeri sono nell'ordine corretto\n\0"
-    inverti: .ascii "i numeri sono da scambiare\n\0"
-    test: .ascii "sono nel controllo per il bubble\n\0"
     a_capo: .ascii "\n\0"
 
 .section .text

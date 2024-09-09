@@ -133,23 +133,21 @@
         movb %al, %bl
         xorl %eax, %eax
         movb %bl, %al
-        # call converti_int_a_str
-        # call stampa_stringa
 
         jmp read_loop
 
     errore_identificativo:
         pusha
         leal errore_identificativo_str, %eax
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         popa
         pusha
         call converti_int_a_str
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         leal a_capo, %eax
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         popa
 
@@ -158,15 +156,15 @@
     errore_durata:
         pusha
         leal errore_durata_str, %eax
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         popa
         pusha
         call converti_int_a_str
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         leal a_capo, %eax
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         popa
 
@@ -175,15 +173,15 @@
     errore_scadenza:
         pusha
         leal errore_scadenza_str, %eax
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         popa
         pusha
         call converti_int_a_str
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         leal a_capo, %eax
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         popa
 
@@ -192,15 +190,15 @@
     errore_priority:
         pusha
         leal errore_priority_str, %eax
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         popa
         pusha
         call converti_int_a_str
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         leal a_capo, %eax
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa  
         popa  
 
@@ -209,13 +207,13 @@
     errore_ordini:   
         pusha
         leal errore_ordini_str, %eax
-        movl pianificazione_fd, %ebx
+        movl $-1, %ebx
         call stampa_stringa
         popa
 
     termina:
         movl ordini_fd, %eax
-        movl pianificazione_fd, %eax
+        movl pianificazione_fd, %ebx
 
         call termina_programma        
 

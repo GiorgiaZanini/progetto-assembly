@@ -86,7 +86,7 @@ esegui_comando:
 _InputNonValido:
     pusha
     leal SceltaNonValida, %eax
-    movl pianificazione_fd, %ebx
+    movl $-1, %ebx
     call stampa_stringa
     popa
 

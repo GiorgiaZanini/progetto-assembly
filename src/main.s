@@ -68,14 +68,11 @@
        movl ordini_fd, %eax
        movl pianificazione_fd, %ebx
        call menu
-       
-       # call ordinamento_EDF
-       # call elabora_ordini
 
     errore_input:
        pusha
        leal errore_input_str, %eax
-       movl pianificazione_fd, %ebx
+       movl $-1, %ebx
        call stampa_stringa
        popa
 
@@ -86,15 +83,10 @@
     errore_file:
        pusha
        leal errore_file_str, %eax
-       movl pianificazione_fd, %ebx
+       movl $-1, %ebx
        call stampa_stringa
        popa
 
-       movl ordini_fd, %eax
-       movl pianificazione_fd, %ebx
-       call termina_programma
-
-    exit:
        movl ordini_fd, %eax
        movl pianificazione_fd, %ebx
        call termina_programma
