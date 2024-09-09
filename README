@@ -1,0 +1,36 @@
+  PROGETTO ASSEMBLY 2024
+   PIANIFICATORE ORDINI
+
+per compilare ed eseguire tramite il Makefile
+
+comando da terminale per compilare: make
+comando da terminale per pulire la cartella obj: make clean
+comando da terminale per eseguire per un file di input: ./bin/pianificatore ./Ordini/Ordini.txt
+comando da terminale per eseguire per un file di input e uno di destinazione: ./bin/pianificatore ./Ordini/Ordini.txt ./Ordini/Pianificazione.txt 
+
+
+
+
+con il file: run.sh  
+
+as main.s -32 -o main.o
+as salva_numeri.s -32 -o salva_numeri.o
+as ordinamento_EDF.s -32 -o ordinamento_EDF.o
+as ordinamento_HPF.s -32 -o ordinamento_HPF.o
+as stampa_stringa.s -32 -o stampa_stringa.o
+as converti_str_a_int.s -32 -o converti_str_a_int.o
+as converti_int_a_str.s -32 -o converti_int_a_str.o
+as stampa_array.s -32 -o stampa_array.o
+as elabora_ordini.s -32 -o elabora_ordini.o
+as termina_programma.s -32 -o termina_programma.o
+as menu.s -32 -o menu.o
+ld main.o salva_numeri.o ordinamento_EDF.o ordinamento_HPF.o stampa_stringa.o converti_str_a_int.o converti_int_a_str.o stampa_array.o elabora_ordini.o termina_programma.o menu.o -m elf_i386 -o pianificatore
+./pianificatore Ordini.txt Pianificazione.txt
+
+NB: se si usa questo file per compilare ed eseguire, tenere tutto nella stessa cartella
+comando da terminale: sh run.sh
+
+
+
+
+TUTTE LE SPECIFICHE NEL FILE: Relazione.pdf
