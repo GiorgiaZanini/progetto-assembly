@@ -11,8 +11,7 @@
     
     stampa_array:
         # ecx contiene la dimensione dell'array
-        # eax contiene il puntatore alla prima cella dell'array
-        movl %eax, %esi
+        # esi contiene il puntatore alla prima cella dell'array
         movl $0, %edx
 
     print_loop:
@@ -24,8 +23,10 @@
 
         pusha
         call converti_int_a_str
+        movl $-1, %ebx
         call stampa_stringa
         leal spazio, %eax
+        movl $-1, %ebx
         call stampa_stringa
         popa
 

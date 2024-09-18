@@ -3,8 +3,6 @@
     counter_array_ordini: .long 0
     counter_corrente: .long 2   # terza posizione
 
-    a_capo: .ascii "\n\0"
-
 .section .text
     .global ordinamento_EDF
     .type ordinamento_EDF, @function

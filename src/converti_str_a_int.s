@@ -30,4 +30,5 @@
         jmp converti_loop
 
     fine:
+        # eax contiene l'intero convertito
         ret
